@@ -46,6 +46,7 @@ class af_https_proxy_assets extends Plugin
 
 			foreach ($images as $img) {
 				$src = $img->getAttribute("src");
+				$src = urlencode( $src );
 				// only replace path if it's a http path
 				if( strpos( $src, 'http:' ) === 0 ) {
 					$proxy_url ="/backend.php?op=pluginhandler&method=proxy&plugin=af_https_proxy_assets&url={$src}";
@@ -62,7 +63,8 @@ class af_https_proxy_assets extends Plugin
 
 	function proxy()
 	{
-		$client = new PhCURL($_REQUEST['url']);
+		$target_url = urldecode( $_REQUEST['url'] );
+		$client = new PhCURL($target_url);
 		$client->loadCommonSettings();
 		$client->setUserAgent();
 		$client->GET();
