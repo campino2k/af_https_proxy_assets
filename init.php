@@ -80,15 +80,13 @@ class af_https_proxy_assets extends Plugin
 	{
 		//$target_url = $_REQUEST['url'];
 		$target_url = urldecode( $_REQUEST['url'] );
-		//$target_url = urldecode( $target_url );
-		//$target_url = urldecode( $target_url );
 		$client = new PhCURL('http://' . $target_url);
 		$client->loadCommonSettings();
-		//$client->enableBinaryTransfer(true);
+		$client->enableBinaryTransfer(true);
 		$client->enableAutoReferer(true);
+		$client->enableHeaderInOutput(false);
 		$client->setUserAgent();
 		$client->GET();
-//		die($client->getHttpCode());
 		ob_end_clean();
 		header("Content-Type: ". $client->getContentType());
 		echo $client->getData();
