@@ -46,12 +46,27 @@ class af_https_proxy_assets extends Plugin
 
 			foreach ($images as $img) {
 				$src = $img->getAttribute("src");
-				$src = urlencode( $src );
 				// only replace path if it's a http path
 				if( strpos( $src, 'http:' ) === 0 ) {
+					$src = substr( $src, 7 );
+					//$src = rawurlencode( $src );
+					
 					$proxy_url ="/backend.php?op=pluginhandler&method=proxy&plugin=af_https_proxy_assets&url={$src}";
 					$img->setAttribute('src', $proxy_url);
+
 				}
+
+				//$srcset = $img->getAttribute("srcset");
+
+				$srcset = str_replace(
+					'http://',
+					'/backend.php?op=pluginhandler&method=proxy&plugin=af_https_proxy_assets&url=',
+					$srcset
+
+				);
+				$img->setAttribute('srcset', $srcset );
+
+
 			}
 
 			$article["content"] = $doc->saveHTML();
@@ -63,18 +78,24 @@ class af_https_proxy_assets extends Plugin
 
 	function proxy()
 	{
+		//$target_url = $_REQUEST['url'];
 		$target_url = urldecode( $_REQUEST['url'] );
-		$client = new PhCURL($target_url);
+		//$target_url = urldecode( $target_url );
+		//$target_url = urldecode( $target_url );
+		$client = new PhCURL('http://' . $target_url);
 		$client->loadCommonSettings();
+		//$client->enableBinaryTransfer(true);
+		$client->enableAutoReferer(true);
 		$client->setUserAgent();
 		$client->GET();
+//		die($client->getHttpCode());
 		ob_end_clean();
 		header("Content-Type: ". $client->getContentType());
 		echo $client->getData();
 		exit(1);
 
 	}
-
+	
 	function api_version()
 	{
 		return 2;
