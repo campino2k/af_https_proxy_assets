@@ -79,7 +79,7 @@ class af_https_proxy_assets extends Plugin
 	function proxy()
 	{
 		//$target_url = $_REQUEST['url'];
-		$target_url = urldecode( $_REQUEST['url'] );
+		$target_url = str_replace(' ', '%20', urldecode( $_REQUEST['url'] ));
 		$client = new PhCURL('http://' . $target_url);
 		$client->loadCommonSettings();
 		$client->enableBinaryTransfer(true);
